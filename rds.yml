@@ -1,0 +1,49 @@
+cfn_tags:
+  "state:scheduleName": 24x7
+  "nbn:focalPoint:applicationId": 2039
+  Platform: STRT
+rds_config:
+  - name: HDA-RDS-DB-SECONDARY2
+    tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-postgres"
+    backup_retention_period: 35   
+    db_snapshot_identifier: "snapshot-post-upgrade-final"
+#    db_instance_identifier: "hhmpjfgpk6rn9n-poc-rds-14"
+    db_instance_identifier: "next-jan-2025"
+#    db_name: dbcc
+    engine: postgres
+#    engine_version: "12.12"
+#    engine_version: "15.2"
+    multi_az: false
+    kms_key_arn: "!ImportValue '{{ cfn_exports.kms_key }}'"
+#    instance_class: db.t3.2xlarge
+    instance_class: db.t4g.2xlarge    
+    license_model: postgresql-license
+    minor_version_upgrade: false
+#    master_username: adminuser
+#    master_password: HDA#Pr0d
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+#        dns_name_prefix: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-rds-poc-secondary"
+        dns_name_prefix: rds.{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}.{{ env }}
+    security_groups:
+      - name: HDA-RDS-DB-SG
+        tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-postgres"
+        vpc: "!ImportValue '{{ cfn_exports.vpc }}'"
+        ingress_rules:
+          - ip_proto: tcp
+            from_port: 5432
+            to_port: 5432
+            cidr_ip: 10.0.0.0/8
+    storage_size: 2087
+    #storage_size: 1500
+    db_parameter_settings:
+      description: parameters for postgres db {{ app_name }}-{{ env }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}
+#      family: postgres12
+      family: postgres13
+      parameters:
+        - name: rds.force_ssl
+          value: 1
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.data.a }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.data.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.data.c }}'"

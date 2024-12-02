@@ -1,0 +1,408 @@
+cfn_tags:
+  "state:scheduleName": 24x7
+  "nbn:focalPoint:applicationId": 2108
+  Platform: HDA
+
+ec2_config:
+  - name: web
+    tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web-<count>"
+    ami: ami-083a07e834f3666e9
+    count:
+      value: 1
+      start_at: 1
+    instance_profile_name: "!ImportValue '{{ cfn_exports.ec2_base_instance_profile }}'"
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+        dns_name_prefix: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web<count>"
+    security_groups:
+      - name: win-ec2
+        tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Win-ec2"
+        vpc: "!ImportValue '{{ cfn_exports.vpc }}'"
+        ingress_rules:
+          - ip_proto: tcp
+            from_port: 3389
+            to_port: 3389
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 5432
+            to_port: 5432
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27001
+            to_port: 27001
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27017
+            to_port: 27017
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 443
+            to_port: 443
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 9000
+            to_port: 9000
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 465
+            to_port: 465
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 587
+            to_port: 587
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 8080
+            to_port: 8080
+            cidr_ip: 10.0.0.0/8
+    ebs:
+      - volume_size: 50
+        device_name: /dev/sda1
+      - volume_size: 100
+        device_name: xvdf
+        encrypted: true
+        kms_key_id: "!ImportValue '{{ cfn_exports.kms_key }}'"
+    keypair_name: AWS Prod Windows
+    instance_type: t2.medium
+    source_dest_check: true
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.app.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.c }}'"
+
+  - name: web
+    tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web-<count>"
+    ami: ami-083a07e834f3666e9
+    count:
+      value: 1
+      start_at: 2
+    instance_profile_name: "!ImportValue '{{ cfn_exports.ec2_base_instance_profile }}'"
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+        dns_name_prefix: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web<count>"
+    security_groups:
+      - name: win-ec2
+        tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Win-ec2"
+        vpc: "!ImportValue '{{ cfn_exports.vpc }}'"
+        ingress_rules:
+          - ip_proto: tcp
+            from_port: 3389
+            to_port: 3389
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 5432
+            to_port: 5432
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27001
+            to_port: 27001
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27017
+            to_port: 27017
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 443
+            to_port: 443
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 9000
+            to_port: 9000
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 465
+            to_port: 465
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 587
+            to_port: 587
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 8080
+            to_port: 8080
+            cidr_ip: 10.0.0.0/8
+    ebs:
+      - volume_size: 50
+        device_name: /dev/sda1
+      - volume_size: 500
+        device_name: xvdf
+        encrypted: true
+        kms_key_id: "!ImportValue '{{ cfn_exports.kms_key }}'"
+    keypair_name: AWS Prod Windows
+    instance_type: t3.xlarge
+    source_dest_check: true
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.app.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.c }}'"
+      
+  - name: web
+    tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web-<count>"
+    ami: ami-083a07e834f3666e9
+    count:
+      value: 1
+      start_at: 3
+    instance_profile_name: "!ImportValue '{{ cfn_exports.ec2_base_instance_profile }}'"
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+        dns_name_prefix: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web<count>"
+    security_groups:
+      - name: win-ec2
+        tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Win-ec2"
+        vpc: "!ImportValue '{{ cfn_exports.vpc }}'"
+        ingress_rules:
+          - ip_proto: tcp
+            from_port: 3389
+            to_port: 3389
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 5432
+            to_port: 5432
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27001
+            to_port: 27001
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27017
+            to_port: 27017
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 443
+            to_port: 443
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 9000
+            to_port: 9000
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 465
+            to_port: 465
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 587
+            to_port: 587
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 8080
+            to_port: 8080
+            cidr_ip: 10.0.0.0/8
+    ebs:
+      - volume_size: 50
+        device_name: /dev/sda1
+      - volume_size: 500
+        device_name: xvdf
+        encrypted: true
+        kms_key_id: "!ImportValue '{{ cfn_exports.kms_key }}'"
+    keypair_name: AWS Prod Windows
+    instance_type: t3.medium
+    source_dest_check: true
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.app.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.c }}'"
+      
+  - name: web
+    tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web-<count>"
+    ami: ami-083a07e834f3666e9
+    count:
+      value: 1
+      start_at: 4
+    instance_profile_name: "!ImportValue '{{ cfn_exports.ec2_base_instance_profile }}'"
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+        dns_name_prefix: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Web<count>"
+    security_groups:
+      - name: win-ec2
+        tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_Win-ec2"
+        vpc: "!ImportValue '{{ cfn_exports.vpc }}'"
+        ingress_rules:
+          - ip_proto: tcp
+            from_port: 3389
+            to_port: 3389
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 5432
+            to_port: 5432
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27001
+            to_port: 27001
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27017
+            to_port: 27017
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 443
+            to_port: 443
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 9000
+            to_port: 9000
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 465
+            to_port: 465
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 587
+            to_port: 587
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 8080
+            to_port: 8080
+            cidr_ip: 10.0.0.0/8
+    ebs:
+      - volume_size: 50
+        device_name: /dev/sda1
+      - volume_size: 500
+        device_name: xvdf
+        encrypted: true
+        kms_key_id: "!ImportValue '{{ cfn_exports.kms_key }}'"
+    keypair_name: AWS Prod Windows
+    instance_type: t3.xlarge
+    source_dest_check: true
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.app.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.c }}'"
+
+  - name: DBProcess
+    tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_DBProcess-<count>"
+    ami: ami-083a07e834f3666e9
+    count:
+      value: 1
+    instance_profile_name: "!ImportValue '{{ cfn_exports.ec2_base_instance_profile }}'"
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+        dns_name_prefix: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_DBProcess<count>"
+    security_groups:
+      - name: DBProcess-ec2
+        tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_DBProcess-ec2"
+        vpc: "!ImportValue '{{ cfn_exports.vpc }}'"
+        ingress_rules:
+          - ip_proto: tcp
+            from_port: 3389
+            to_port: 3389
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 5432
+            to_port: 5432
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27001
+            to_port: 27001
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 27017
+            to_port: 27017
+            cidr_ip: 10.0.0.0/8
+    ebs:
+      - volume_size: 50
+        device_name: /dev/sda1
+      - volume_size: 300
+        device_name: xvdf
+        encrypted: true
+        kms_key_id: "!ImportValue '{{ cfn_exports.kms_key }}'"
+    keypair_name: AWS Prod Windows
+    instance_type: t2.xlarge
+    source_dest_check: true
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.app.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.c }}'"
+
+  - name: etl
+    tag_name: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_ETL-<count>"
+    ami: ami-083a07e834f3666e9
+    count:
+      value: 3
+    instance_profile_name: "!ImportValue '{{ cfn_exports.ec2_base_instance_profile }}'"
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+        dns_name_prefix: "{{ app_name }}-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-Network_Acceptance_ETL<count>"
+    security_groups:
+      - ref_name: win-ec2
+    ebs:
+      - volume_size: 50
+        device_name: /dev/sda1
+      - volume_size: 300
+        device_name: xvdf
+        encrypted: true
+        kms_key_id: "!ImportValue '{{ cfn_exports.kms_key }}'"
+    keypair_name: AWS Prod Windows
+    instance_type: t2.xlarge
+    source_dest_check: true
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.app.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.c }}'"
+
+  - name: rhel7-ec2
+    tag_name: "{{ app_name }}-service-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-<count>"
+    ami: ami-06374c69622ec8f8d
+    count:
+      value: 1
+    instance_profile_name: networkAcceptanceEc2InstanceProfile
+    r53_record_sets:
+      - hosted_zone_name: "!ImportValue '{{ cfn_exports.hosted_zone_name }}'"
+        dns_name_prefix: "{{ app_name }}-service-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}-<count>"
+    security_groups:
+      - name: service-ec2
+        tag_name: "{{ app_name }}-service-{{ sub_env }}{% if stack_identifier is defined %}{{ stack_identifier }}{% endif %}"
+        vpc: "!ImportValue '{{ cfn_exports.vpc }}'"
+        ingress_rules:
+          - ip_proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 10.0.0.0/8
+          - ip_proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 192.168.0.0/16
+    ebs:
+      - volume_size: 100
+        device_name: /dev/sda1
+        volume_type: gp2
+      - volume_size: 100
+        device_name: /dev/sdb
+        volume_type: gp2
+        encrypted: true
+        kms_key_id: "!ImportValue '{{ cfn_exports.kms_key }}'"
+
+    keypair_name: AWS Prod Linux
+    instance_type: t3.2xlarge
+    source_dest_check: true
+    subnets:
+      - "!ImportValue '{{ cfn_exports.subnets.app.a }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.b }}'"
+      - "!ImportValue '{{ cfn_exports.subnets.app.c }}'"
+  
+  
